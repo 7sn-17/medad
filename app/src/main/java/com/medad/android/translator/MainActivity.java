@@ -1,9 +1,11 @@
 package com.medad.android.translator;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -67,6 +69,20 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "تنبيه: عدم منح الصلاحيات قد يمنع قراءة ملفات OBB والألعاب.", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    // --- تعريف الجسر البرمجي لربط الجافاسكريبت بجافا ---
+    public static class AndroidBridge {
+        private Context mContext;
+
+        public AndroidBridge(Context context) {
+            mContext = context;
+        }
+
+        @JavascriptInterface
+        public void showToast(String message) {
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         }
     }
 }
