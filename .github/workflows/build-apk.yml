@@ -20,21 +20,31 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Android SDK and Accept Licenses
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Accept Android SDK Licenses Manually
       run: |
-        export ANDROID_SDK_ROOT=$HOME/android-sdk
-        mkdir -p $ANDROID_SDK_ROOT
+        # إنشاء مجلد التراخيص وقبول كافة الشروط يدوياً لضمان عدم توقف البناء أبداً
         mkdir -p $ANDROID_SDK_ROOT/licenses
         echo "24333f8a63b6825ea3c55b4f0352627561932bc5" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
         echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
         echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
+        echo "8933bab14c042459117fbaa01658674eaf04352a" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
+        echo "d56f5187479451eabf01fb78af6dfcb139a648b0" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
+        echo "33b134b1154f31c238b7d983416c1412b591b61c" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
 
-    - name: Compile and Build APK
+    - name: Grant execute permission for gradlew
       run: |
-        export ANDROID_SDK_ROOT=$HOME/android-sdk
-        # استخدام أدوات البناء المباشرة لتفادي مشاكل الـ wrapper
-        sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-        ./gradlew assembleDebug || gradle assembleDebug
+        if [ -f "gradlew" ]; then
+          chmod +x gradlew
+        else
+          gradle wrapper
+          chmod +x gradlew
+        fi
+
+    - name: Build APK with Gradle
+      run: ./gradlew assembleDebug
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
