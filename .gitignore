@@ -1,0 +1,10 @@
+# Android build outputs & caches
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/app/build/
+/build/
+*.apk
+*.bak
