@@ -22,11 +22,8 @@ jobs:
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
-
-    - name: Accept Android SDK Licenses
-      run: |
-        yes | sdkmanager --licenses || true
-        sdkmanager --update || true
+      with:
+        accept-android-sdk-licenses: true
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
