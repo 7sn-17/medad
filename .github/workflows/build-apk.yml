@@ -2,37 +2,40 @@ name: Build Medad Android Package
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
 
-      - name: Package Web Assets and Java Bridges
-        run: |
-          echo "جاري تجميع حزمة تطبيق مِدَاد أندرويد المتكاملة..."
-          mkdir -p release-bundle
-          cp -r app/src/main/assets/* release-bundle/
-          cp -r app/src/main/java/ release-bundle/java-sources/
-          echo "تم تجميع الملفات بنجاح وجاهزة للاستخدام."
+    - name: Accept Android SDK Licenses
+      run: |
+        yes | sdkmanager --licenses || true
+        sdkmanager --update || true
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: MedadAndroid-Full-Source-Package
-          path: release-bundle/
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build APK with Gradle
+      run: ./gradlew assembleDebug
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: medad-apk
+        path: app/build/outputs/apk/debug/app-debug.apk
