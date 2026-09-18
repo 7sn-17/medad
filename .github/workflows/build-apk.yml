@@ -32,7 +32,9 @@ jobs:
       run: |
         wget https://services.gradle.org/distributions/gradle-8.2-bin.zip
         unzip gradle-8.2-bin.zip
+        sudo rm -rf /opt/gradle
         sudo mv gradle-8.2 /opt/gradle
+        sudo rm -f /usr/bin/gradle
         sudo ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
     - name: Build APK with Gradle 8.2
