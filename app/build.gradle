@@ -28,11 +28,10 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    // تعديل اختياري لتسمية ملف الـ APK الناتج
+    // تخصيص اسم ملف الـ APK الناتج ليصبح medad.apk
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def projectName = "medad"
-            outputFileName = "${projectName}-${variant.name}.apk"
+            outputFileName = "medad.apk"
         }
     }
 }
