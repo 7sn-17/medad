@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 public class MainActivity extends AppCompatActivity {
 
     private static final int STORAGE_PERMISSION_CODE = 101;
+    private static final int NOTIFICATION_PERMISSION_CODE = 102;
     private WebView webView;
 
     @Override
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // التحقق الفعلي وطلب صلاحيات الذاكرة عند بدء التشغيل
+        // التحقق الفعلي وطلب الصلاحيات (الذاكرة والإشعارات) عند بدء التشغيل
         checkAndRequestPermissions();
 
         webView = findViewById(R.id.webview);
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAndRequestPermissions() {
+        // فحص صلاحيات التخزين للأجهزة حتى أندرويد 12
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -56,6 +58,15 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 }, STORAGE_PERMISSION_CODE);
+            }
+        }
+
+        // فحص وطلب إذن الإشعارات لأندرويد 13 (API 33) فما فوق
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.POST_NOTIFICATIONS
+                }, NOTIFICATION_PERMISSION_CODE);
             }
         }
     }
@@ -68,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "تم منح صلاحيات الذاكرة وفحص الألعاب بنجاح", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "تنبيه: عدم منح الصلاحيات قد يمنع قراءة ملفات OBB والألعاب.", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "تم تفعيل إذن الإشعارات بنجاح", Toast.LENGTH_SHORT).show();
             }
         }
     }
