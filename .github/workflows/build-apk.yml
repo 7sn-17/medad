@@ -24,15 +24,13 @@ jobs:
       run: |
         export ANDROID_SDK_ROOT=$HOME/android-sdk
         mkdir -p $ANDROID_SDK_ROOT
-        
-        # الموافقة التلقائية المباشرة على رخص أندرويد بمنع أي انتظار أو تفاعل يدوي
         mkdir -p $ANDROID_SDK_ROOT/licenses
         echo "24333f8a63b6825ea3c55b4f0352627561932bc5" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
         echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
         echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper
 
     - name: Build APK with Gradle
       run: ./gradlew assembleDebug
