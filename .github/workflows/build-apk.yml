@@ -29,11 +29,12 @@ jobs:
         echo "84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
         echo "d975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
 
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper
-
-    - name: Build APK with Gradle
-      run: ./gradlew assembleDebug
+    - name: Compile and Build APK
+      run: |
+        export ANDROID_SDK_ROOT=$HOME/android-sdk
+        # استخدام أدوات البناء المباشرة لتفادي مشاكل الـ wrapper
+        sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        ./gradlew assembleDebug || gradle assembleDebug
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
